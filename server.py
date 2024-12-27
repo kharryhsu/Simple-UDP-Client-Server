@@ -14,23 +14,14 @@ def start_server(addr='localhost', port=12345):
                 
                 print(f'Received from client {client_address}: {data.decode("utf-8")}')
                 
-                msg = input("Server: Enter message to send (or type 'exit' to end communication)\n> ")
+                msg = f"Hey, Client {client_address[0]}"
                 
-                if msg.lower() == 'exit':
-                    print("Ending connection with client.")
-                    break
-                
-                try:
-                    server_socket.sendto(msg.encode('utf-8'), client_address)
-                except Exception as e:
-                    print(f"Error sending message: {e}")
-                    break
+                server_socket.sendto(msg.encode('utf-8'), client_address)
             except KeyboardInterrupt:
                 print("Exited by user.")
+                break
             except Exception as e:
                 print(f'Error handling client {client_address}: {e}')
-    except KeyboardInterrupt:
-        print("Exited by user.")
     except Exception as e:
         print(f'Server error: {e}')
     finally:

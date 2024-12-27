@@ -4,6 +4,7 @@ import argparse
 def start_client(addr='localhost', port=12345):
     try:
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        client_socket.settimeout(1)
         
         print(f'Connected to server at {addr}:{port}')
         
@@ -16,20 +17,13 @@ def start_client(addr='localhost', port=12345):
                 
             try:
                 client_socket.sendto(msg.encode('utf-8'), (addr, port))
-            except Exception as e:
-                print(f"Error sending message: {e}")
-                break
-            
-            try:
-                data, server_address = client_socket.recvfrom(1024)
                 
-                if data:
+                try:
+                    data, server_address = client_socket.recvfrom(1024)
+                    
                     print(f'Received from server: {data.decode("utf-8")}')
-                else:
-                    print("Server closed the connection.")
-                    break
-            except KeyboardInterrupt:
-                print("Exited by user.")
+                except socket.timeout:
+                    print("No response from server.")
             except Exception as e:
                 print(f'Error receiving data: {e}')
     except KeyboardInterrupt:
