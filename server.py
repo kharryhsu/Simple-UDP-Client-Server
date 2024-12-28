@@ -1,27 +1,33 @@
 import socket
 import argparse
+import threading
+
+def handle_client(server_socket, data, client_address):
+    try:
+        print(f"Received from client {client_address}: {data.decode('utf-8')}\n")
+        
+        msg = f"Hey, Client {client_address[0]}"
+        
+        server_socket.sendto(msg.encode('utf-8'), client_address)
+    except Exception as e:
+        print(f"Error handling client {client_address}: {e}")
+    
 
 def start_server(addr='localhost', port=12345):
     try:
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         server_socket.bind((addr, port))
         
-        print(f'Server is listening on port {addr}:{port}...')
+        print(f'Server is listening on port {addr}:{port}...\n')
         
         while True:
             try:
                 data, client_address = server_socket.recvfrom(1024)
                 
-                print(f'Received from client {client_address}: {data.decode("utf-8")}')
-                
-                msg = f"Hey, Client {client_address[0]}"
-                
-                server_socket.sendto(msg.encode('utf-8'), client_address)
-            except KeyboardInterrupt:
-                print("Exited by user.")
-                break
+                client_thread = threading.Thread(target=handle_client, args=(server_socket, data, client_address))
+                client_thread.start()
             except Exception as e:
-                print(f'Error handling client {client_address}: {e}')
+                print(f'Error receiving data: {e}')
     except Exception as e:
         print(f'Server error: {e}')
     finally:
