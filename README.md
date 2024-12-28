@@ -1,4 +1,4 @@
-# Simple-UDP-Client-Server
+# UDP-Client-Server
 
 This project demonstrates a simple UDP server and client implementation in Python. The server listens for incoming messages from clients and allows communication. Both server and client support user-configurable address and port settings via command-line arguments or interactive input.
 
